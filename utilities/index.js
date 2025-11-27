@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const { body, validationResult } = require("express-validator"); 
 const Util = {}
 
 /* ************************
@@ -82,7 +83,7 @@ Util.buildItemDetail = async function(item) {
   const priceFormatted = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-  }).format(item.inv_price); // Corrected from item.invPrice
+  }).format(item.inv_price);
 
   // Helper to format mileage with commas
   const mileageFormatted = new Intl.NumberFormat('en-US', {
@@ -152,9 +153,179 @@ Util.buildItemDetail = async function(item) {
  **************************************** */
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
-module.exports = {
-  getNav: Util.getNav,
-  buildClassificationGrid: Util.buildClassificationGrid,
-  buildItemDetail: Util.buildItemDetail, 
-  handleErrors: Util.handleErrors
+
+// WEEK 4
+/* ************************
+ * Constructs the Classification List HTML
+ * for the Add Inventory Form (Task 3)
+ * *********************** */
+Util.buildClassificationList = async function (classification_id = null) {
+  let data = await invModel.getClassifications()
+  let classificationList =
+    '<select name="classification_id" id="classificationList" required>'
+  classificationList += "<option value=''>Choose a Classification</option>"
+  
+  // Use data.rows if your model returns an array of row objects
+  data.rows.forEach((row) => { 
+    classificationList += `<option value="${row.classification_id}"`
+    if (
+      classification_id != null &&
+      row.classification_id == classification_id
+    ) {
+      classificationList += " selected "
+    }
+    classificationList += `>${row.classification_name}</option>`
+  })
+  classificationList += "</select>"
+  return classificationList
 }
+
+/* ****************************************
+ * Validation Rules for New Classification
+ * *************************************** */
+Util.classificationRules = () => {
+    // This array of validations is what gets returned to the router.
+    // Express-Validator automatically looks for fields in req.body.
+    return [
+        // Classification name is required and must be alphanumeric (no spaces/symbols)
+        body("classification_name")
+            .trim()
+            .isLength({ min: 1 })
+            .withMessage("Please provide a classification name.") 
+            .isAlphanumeric() // Ensures only letters and numbers (no spaces, dashes, etc.)
+            .withMessage("Classification name must contain only letters and numbers and cannot have spaces.")
+            .escape(), // Sanitize input
+    ];
+};
+
+/* ****************************************
+ * Check Classification Data
+ * *************************************** */
+Util.checkClassificationData = async (req, res, next) => {
+    const { classification_name } = req.body;
+    let nav = await Util.getNav(); // Assuming getNav is available in your full utilities file
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        let className = classification_name || '';
+        // If validation fails, re-render the form with errors
+        res.render("inventory/add-classification", {
+            errors: errors.array(),
+            title: "Add New Classification",
+            nav,
+            className
+        });
+        return;
+    }
+    next();
+};
+
+/* ****************************************
+ * Validation Rules for New Inventory Item
+ * *************************************** */
+Util.inventoryRules = () => {
+    return [
+        // classification_id is required and must be an integer
+        body("classification_id")
+            .isInt({ min: 1 })
+            .withMessage("Please select a valid classification."),
+
+        // inv_make is required
+        body("inv_make")
+            .trim()
+            .isLength({ min: 3 })
+            .withMessage("Please provide a vehicle make (min 3 characters).")
+            .escape(),
+
+        // inv_model is required
+        body("inv_model")
+            .trim()
+            .isLength({ min: 3 })
+            .withMessage("Please provide a vehicle model (min 3 characters).")
+            .escape(),
+
+        // inv_description is required
+        body("inv_description")
+            .trim()
+            .isLength({ min: 10 })
+            .withMessage("Please provide a vehicle description (min 10 characters).")
+            .escape(),
+            
+        // inv_image is required
+        body("inv_image")
+            .trim()
+            .isLength({ min: 1 })
+            .withMessage("Please provide an image path.")
+            .matches(/^\/images\/vehicles\//) // Simple check for a specific path format
+            .withMessage("Image path must start with /images/vehicles/"),
+
+        // inv_thumbnail is required
+        body("inv_thumbnail")
+            .trim()
+            .isLength({ min: 1 })
+            .withMessage("Please provide a thumbnail path.")
+            .matches(/^\/images\/vehicles\//) // Simple check for a specific path format
+            .withMessage("Thumbnail path must start with /images/vehicles/"),
+
+        // inv_price is required and must be a number
+        body("inv_price")
+            .trim()
+            .isFloat({ min: 0 })
+            .withMessage("Please provide a valid price (must be a positive number).")
+            .escape(),
+
+        // inv_year is required and must be a 4-digit number
+        body("inv_year")
+            .trim()
+            .isLength({ min: 4, max: 4 })
+            .withMessage("Please provide a 4-digit year.")
+            .isInt()
+            .withMessage("Year must be a number.")
+            .escape(),
+
+        // inv_miles is required and must be an integer
+        body("inv_miles")
+            .trim()
+            .isInt({ min: 0 })
+            .withMessage("Please provide a valid mileage (must be an integer).")
+            .escape(),
+
+        // inv_color is required
+        body("inv_color")
+            .trim()
+            .isLength({ min: 1 })
+            .withMessage("Please provide a vehicle color.")
+            .escape(),
+    ];
+};
+
+/* ****************************************
+ * Check Inventory Item Data
+ * *************************************** */
+Util.checkInventoryData = async (req, res, next) => {
+    const { 
+      classification_id, inv_make, inv_model, 
+      inv_description, inv_image, inv_thumbnail, 
+      inv_price, inv_year, inv_miles, inv_color 
+    } = req.body;
+
+    let nav = await Util.getNav(); // Assuming getNav is available in your full utilities file
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // If validation fails, re-render the form with errors
+      res.render("inventory/add-inventory", {
+          errors: errors.array(),
+          title: "Add New Inventory Item",
+          nav,
+          // Pass back previously entered values
+          classification_id, inv_make, inv_model, 
+          inv_description, inv_image, inv_thumbnail, 
+          inv_price, inv_year, inv_miles, inv_color
+        });
+        return;
+    }
+    next();
+};
+
+module.exports = Util; 

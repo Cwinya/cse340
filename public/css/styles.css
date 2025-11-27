@@ -1,3 +1,16 @@
+/* --------------------------------------
+ * Base Styling for Inventory Management Forms
+ * -------------------------------------- */
+:root {
+  --primary-color: #3B82F6; /* Blue for primary actions */
+  --secondary-color: #1F2937; /* Dark gray for text */
+  --background-color: #F9FAFB; /* Light gray background */
+  --border-color: #D1D5DB; /* Light border color */
+  --error-color: #EF4444; /* Red for errors */
+  --success-color: #10B981; /* Green for success */
+  --font-family: 'Inter', Arial, sans-serif;
+}
+
 /******************************CHANGE BOX MODEL***************************/
 *,
 *:before,
@@ -255,6 +268,180 @@ footer p {
     display: block;
 }
 
+/* --- Main Layout and Headings --- */
+.main-content-heading {
+    color: var(--secondary-color);
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* --- Navigation/Management List (e.g., on /inv/) --- */
+.management-links {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px; /* Constrain width for cleaner presentation */
+}
+
+.management-links li a {
+    display: block;
+    background-color: #FFFFFF;
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    text-align: center;
+    box-shadow: 0 0 10px var(--border-color);
+}
+
+.management-links li a:hover,
+.management-links li a:focus {
+    background-color: #EBF8FF;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* --------------------------------------
+ * Form Structure and Layout
+ * -------------------------------------- */
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: center;
+    background: #FFFFFF;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Vertical spacing between form groups */
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* --- Form Groups for Organization --- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --------------------------------------
+ * Input, Label, and Control Styling
+ * -------------------------------------- */
+
+label {
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: #FFFFFF;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* --- Submit Button --- */
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.submit-btn:hover,
+.submit-btn:focus {
+    background-color: #2563EB; /* Darker blue */
+    transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+    background-color: #9CA3AF;
+    cursor: not-allowed;
+}
+
+
+/* --------------------------------------
+ * Messages and Error Handling (Flash)
+ * -------------------------------------- */
+.notice {
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Error message styling (often output by <%= messages() %>) */
+.alert-danger {
+    background-color: #FEE2E2;
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
+
+/* Success message styling */
+.alert-success {
+    background-color: #D1FAE5;
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+/* Validation message below input (specific field errors) */
+.form-group span.error {
+    color: var(--error-color);
+    font-size: 0.8rem;
+    margin-top: -0.25rem;
+    font-weight: 500;
+}
+
+
 /******* Responsive Design ***************/
 @media only screen and (min-width: 33rem) {
   /* #wrapper {
@@ -281,5 +468,19 @@ footer p {
 
   .detail-image-area, .detail-info-area {
     flex: 1; /* Both take up roughly equal space */
+  }
+  .form-container {
+      margin: 1rem;
+      padding: 1rem;
+      box-shadow: none; /* Remove shadow on small screens for cleaner look */
+  }
+  
+  .management-links {
+      max-width: 90%;
+      margin: 1rem auto;
+  }
+  
+  .main-content-heading {
+      font-size: 2rem;
   }
 }
