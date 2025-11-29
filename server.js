@@ -12,54 +12,67 @@ const app = express()
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
+// FIX: Changed './route/accountRoute' to './routes/accountRoute' 
+const accountRoute = require("./routes/accountRoute") 
 const utilities = require("./utilities")
 // npm install express-session cookie-parser connect-flash
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const flash = require("connect-flash"); // Flash message management
+const flash = require("connect-flash"); 
+// NEW: Import Utility functions and middleware
+const Util = require("./utilities/")
 
 
 // --- MIDDLEWARE SETUP ---
 // 1. Session Middleware (REQUIRED by connect-flash)
 app.use(
-  session({
-    secret: "supersecret-key", // IMPORTANT: Use a secure, secret string here
-    resave: false,
-    saveUninitialized: false,
-    name: 'sessionId', // Optional: customize the cookie name
-  })
+    session({
+        secret: process.env.SESSION_SECRET || "supersecret-key", 
+        resave: true,
+        saveUninitialized: true,
+        name: 'sessionId', 
+    })
 );
 // 2. Cookie Parser Middleware
 app.use(cookieParser());
 // 3. Flash Message Middleware
 app.use(flash());
+
 // Middleware to parse URL-encoded form data
 app.use(express.urlencoded({ extended: true })) 
-// Middleware to parse JSON data (recommended, even if not strictly needed yet)
+// Middleware to parse JSON data 
 app.use(express.json())
+
+// The following block is typically replaced by the 'express-messages' middleware below, 
+// which is simpler and more reliable for rendering flash messages in EJS.
+/*
 // 4. Local Variables Middleware (Defines the messages() helper)
-// This is the CRITICAL block that defines the 'messages' function 
 app.use(async (req, res, next) => {
-  // Define a res.locals.messages function that renders all flash messages
-  // This structure is compatible with the <%- messages() %> call in your EJS file.
-  res.locals.messages = () => {
-    // Collect all flash messages
-    let output = '';
-    
-    // Check for success messages
-    const success = req.flash('success');
-    if (success && success.length > 0) {
-      output += `<div class="notice success">${success.join('<br>')}</div>`;
-    }
-    // Check for error messages (often used for validation errors too)
-    const error = req.flash('error');
-    if (error && error.length > 0) {
-      output += `<div class="notice error">${error.join('<br>')}</div>`;
-    }
-    return output;
-  };
-  next();
+    // Define a res.locals.messages function that renders all flash messages
+    res.locals.messages = () => {
+        let output = '';
+        const success = req.flash('success');
+        if (success && success.length > 0) {
+            output += `<div class="notice success">${success.join('<br>')}</div>`;
+        }
+        const error = req.flash('error');
+        if (error && error.length > 0) {
+            output += `<div class="notice error">${error.join('<br>')}</div>`;
+        }
+        return output;
+    };
+    next();
 });
+*/
+
+// Express Messages Middleware (Simplified method for rendering flash messages)
+app.use(function(req, res, next){
+    res.locals.messages = require("express-messages")(req, res)
+    next()
+})
+
+// NEW: Middleware to check for JWT token and set res.locals (Task 1, 3, 5 Prep)
+app.use(Util.checkLogin)
 
 
 
@@ -81,6 +94,8 @@ app.use(static)
 app.get("/", utilities.handleErrors(baseController.buildHome))
 // Inventory routes
 app.use("/inv", inventoryRoute)
+// Account routes
+app.use("/account", accountRoute) // Uses the corrected accountRoute import
 // File Not Found Route - must be last route in list
 app.use(async (_req, _res, next) => {
     next({status: 404, message: 'Sorry, we appear to have lost that page.'})

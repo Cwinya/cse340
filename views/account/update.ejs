@@ -1,0 +1,109 @@
+<% 
+    // Determine which set of errors to use for the update form
+    const updateErrors = errors; 
+    // Determine which set of errors to use for the password form
+    const changePasswordErrors = passwordErrors; 
+%>
+
+<div class="form-container">
+    <h1 class="main-content-heading"><%= title %></h1>
+
+    <%- messages() %>
+
+    <% if (updateErrors && updateErrors.array().length) { %>
+        <ul class="notice alert-danger">
+            <% updateErrors.array().forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+    <% if (changePasswordErrors && changePasswordErrors.array().length) { %>
+        <ul class="notice alert-danger">
+            <% changePasswordErrors.array().forEach(error => { %>
+                <li><%= error.msg %></li>
+            <% }) %>
+        </ul>
+    <% } %>
+
+
+    <!-- ============================================== -->
+    <!-- Form 1: Account Update (First Name, Last Name, Email) -->
+    <!-- ============================================== -->
+    <h3 class="section-heading">Update Account Information</h3>
+    <form id="updateForm" action="/account/update-account" method="POST">
+        <fieldset>
+            
+            <div class="form-group">
+                <label for="account_firstname">First Name</label>
+                <input 
+                    type="text" 
+                    id="account_firstname" 
+                    name="account_firstname" 
+                    required 
+                    value="<%= locals.account_firstname || account_firstname %>"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="account_lastname">Last Name</label>
+                <input 
+                    type="text" 
+                    id="account_lastname" 
+                    name="account_lastname" 
+                    required 
+                    value="<%= locals.account_lastname || account_lastname %>"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="account_email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="account_email" 
+                    name="account_email" 
+                    required 
+                    value="<%= locals.account_email || account_email %>"
+                >
+            </div>
+
+            <!-- Hidden field for account_id -->
+            <input type="hidden" name="account_id" value="<%= account_id %>">
+            
+            <button type="submit" class="submit-btn">Update Account</button>
+        </fieldset>
+    </form>
+
+
+    <!-- ============================================== -->
+    <!-- Form 2: Change Password -->
+    <!-- ============================================== -->
+    <hr style="margin: 2rem 0;">
+
+    <h3 class="section-heading">Change Password</h3>
+    <p>
+        <span class="notice">
+            Warning: Changing your password will log you out. 
+            Password must be at least 12 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+        </span>
+    </p>
+
+    <form id="passwordForm" action="/account/change-password" method="POST">
+        <fieldset>
+            <div class="form-group">
+                <label for="account_password">New Password</label>
+                <input 
+                    type="password" 
+                    id="account_password" 
+                    name="account_password" 
+                    required 
+                >
+            </div>
+
+            <!-- Hidden field for account_id -->
+            <input type="hidden" name="account_id" value="<%= account_id %>">
+            
+            <button type="submit" class="submit-btn">Change Password</button>
+        </fieldset>
+    </form>
+</div>

@@ -36,12 +36,17 @@ body {
   grid-gap: 2rem;
   background-color:#f4f4f4;
 }
-#top-header a {
+#top-header a, #csemotors a, #tools a {
   text-decoration: none;
   font: 2rem bolder ;
   color: black;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1rem;
+}
 
 /************************************NAVIGATION****************************/
 nav {
@@ -316,7 +321,6 @@ footer p {
     max-width: 600px;
     margin: 0 auto;
     padding: 2rem;
-    display: center;
     background: #FFFFFF;
     border-radius: 0.75rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -442,6 +446,173 @@ textarea {
 }
 
 
+
+
+
+
+
+
+
+
+/* NEW */
+h1 {
+    font-size: 2.25rem; /* text-4xl */
+    font-weight: 800; /* font-extrabold */
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #2c5282; /* Blue title color */
+}
+
+h2 {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+h3 {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 600; /* font-semibold */
+    margin-bottom: 0.75rem;
+    color: #4a5568;
+}
+
+/* --- Main Container Styling --- */
+.account-management-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px; /* rounded-xl */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+/* --- Account Details List --- */
+.account-management-container ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+    border-top: 1px solid #edf2f7;
+}
+
+.account-management-container ul li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 1rem;
+}
+
+.account-management-container ul li strong {
+    font-weight: 700;
+    color: #4a5568;
+    display: inline-block;
+    min-width: 150px;
+}
+
+/* --- Link Styling --- */
+.update-link {
+    margin-top: 1.5rem;
+}
+
+.update-link a, .management-section a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #4c51bf; /* Indigo-600 */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.update-link a:hover, .management-section a:hover {
+    background-color: #5a62c6; /* Slightly darker indigo */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Inventory Management Section (Employee/Admin) --- */
+.management-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #e6fffa; /* Teal-100 */
+    border: 2px solid #38b2ac; /* Teal-400 */
+    border-radius: 8px;
+}
+
+.management-section h3 {
+    margin-top: 0;
+    color: #2c7a7b; /* Dark teal */
+}
+
+/* --- Form and Input Styling (for Update View) --- */
+.update-form label {
+    display: block;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.25rem;
+    color: #2d3748;
+}
+
+.update-form input[type="text"],
+.update-form input[type="email"],
+.update-form input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+
+.update-form input[type="text"]:focus,
+.update-form input[type="email"]:focus,
+.update-form input[type="password"]:focus {
+    border-color: #4c51bf;
+    box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.2);
+}
+
+.update-form button, .update-form input[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1.5rem;
+    background-color: #4c51bf; /* Indigo-600 */
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.update-form button:hover, .update-form input[type="submit"]:hover {
+    background-color: #5a62c6;
+    transform: translateY(-1px);
+}
+
+/* --- Flash Messages (Assuming common class `notice`) --- */
+.notice {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    text-align: center;
+}
+.notice.success {
+    background-color: #c6f6d5; /* Green-200 */
+    color: #276749; /* Green-800 */
+    border: 1px solid #68d391;
+}
+.notice.error {
+    background-color: #fed7d7; /* Red-200 */
+    color: #9b2c2c; /* Red-800 */
+    border: 1px solid #f68787;
+}
+
+
 /******* Responsive Design ***************/
 @media only screen and (min-width: 33rem) {
   /* #wrapper {
@@ -470,17 +641,33 @@ textarea {
     flex: 1; /* Both take up roughly equal space */
   }
   .form-container {
-      margin: 1rem;
-      padding: 1rem;
-      box-shadow: none; /* Remove shadow on small screens for cleaner look */
+    margin: 1rem;
+    padding: 1rem;
+    box-shadow: none; /* Remove shadow on small screens for cleaner look */
   }
   
   .management-links {
-      max-width: 90%;
-      margin: 1rem auto;
+    max-width: 90%;
+    margin: 1rem auto;
   }
   
   .main-content-heading {
+    font-size: 2rem;
+  }
+  .account-management-container {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+    
+    h1 {
       font-size: 2rem;
+    }
+
+  .account-management-container ul li strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    min-width: unset;
   }
 }
+

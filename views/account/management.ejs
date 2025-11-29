@@ -1,0 +1,37 @@
+<div class="form-container">
+    <h1 class="main-content-heading">Account Management</h1>
+
+    <%- messages() %>
+
+    <% if (accountData) { %>
+        <!-- Greeting (Task 3) -->
+        <h2>Welcome <%= accountData.account_firstname %></h2>
+        
+        <p>You are logged in as a <strong><%= accountData.account_type %></strong> user.</p>
+
+        <!-- Update Account Information Link (Task 3) -->
+        <div class="management-section">
+            <h3 class="section-heading">Account Settings</h3>
+            <p>
+                <a href="/account/update/<%= accountData.account_id %>" title="Update account information">
+                    Update Account Information
+                </a>
+            </p>
+        </div>
+
+        <!-- Inventory Management Link (Visible only for Employee/Admin - Task 3) -->
+        <% if (accountData.account_type === 'Employee' || accountData.account_type === 'Admin') { %>
+            <div class="management-section">
+                <h3 class="section-heading">Inventory Management</h3>
+                <p>
+                    <a href="/inv/" title="Access the Inventory Management View">
+                        Manage Inventory
+                    </a>
+                </p>
+            </div>
+        <% } %>
+
+    <% } else { %>
+        <p>Error: Account data not available.</p>
+    <% } %>
+</div>

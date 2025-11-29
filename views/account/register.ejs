@@ -1,0 +1,87 @@
+<% /*
+The 'title' variable is set in the controller and used by the layout.
+The 'messages()' function is provided by the express-messages middleware.
+*/ %>
+
+<div id="account-register-wrapper">
+<h1><%- title %></h1>
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+        <% errors.forEach(error => { %>
+            <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<form id="registrationForm" action="/account/register" method="post">
+    
+    <label for="accountFirstname">First Name:</label>
+    <input 
+        type="text" 
+        name="account_firstname" 
+        id="accountFirstname" 
+        placeholder="Enter first name"
+        required
+        value="<%= locals.account_firstname %>"
+    >
+
+    <label for="accountLastname">Last Name:</label>
+    <input 
+        type="text" 
+        name="account_lastname" 
+        id="accountLastname" 
+        placeholder="Enter last name"
+        required
+        value="<%= locals.account_lastname %>"
+    >
+
+    <label for="accountEmail">Email Address:</label>
+    <input 
+        type="email" 
+        name="account_email" 
+        id="accountEmail" 
+        placeholder="Enter a valid email"
+        required
+        value="<%= locals.account_email %>"
+    >
+
+    <!-- NEW: Account Type Selection -->
+    <label for="accountType">Account Type:</label>
+    <select name="account_type" id="accountType" required>
+        <option value="">Select Account Type</option>
+        <% 
+            // Determine the selected value for sticky forms, defaulting to 'Client'
+            const selectedType = locals.account_type || 'Client'; 
+        %>
+        <option value="Client" <%= selectedType === 'Client' ? 'selected' : '' %>>Client</option>
+        <option value="Employee" <%= selectedType === 'Employee' ? 'selected' : '' %>>Employee</option>
+        <option value="Admin" <%= selectedType === 'Admin' ? 'selected' : '' %>>Admin</option>
+    </select>
+    <!-- END NEW: Account Type Selection -->
+
+    <label for="accountPassword">Password:</label>
+    <p class="small-text mt-1 mb-2">
+        * Passwords must be at least 12 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.
+    </p>
+    <input 
+        type="password" 
+        name="account_password" 
+        id="accountPassword" 
+        placeholder="Enter password"
+        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
+        title="Password must be at least 12 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+        required
+    >
+    
+    <button type="submit">Register Account</button>
+
+    <p class="mt-4">
+        Already have an account? <a href="/account/login" title="Login to your account">Login here</a>.
+    </p>
+</form>
+
+
+</div>

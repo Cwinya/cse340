@@ -1,0 +1,52 @@
+<% if (title) { %>
+
+<h1><%= title %></h1>
+<% } else {
+// Fallback if title is missing
+res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<div class="account-management-container">
+<% if (account_firstname && account_id) { %>
+
+<!-- Greeting: required for all account types -->
+
+<h2>Welcome <%= account_firstname %></h2>
+
+<!-- Account Details List -->
+
+<p><strong>Account Information:</strong></p>
+<ul>
+<li>Name: <%= account_firstname %> <%= account_lastname %></li>
+<li>Email: <%= account_email %></li>
+<li>Account Type: <%= account_type %></li>
+</ul>
+
+<!-- Update Account Information Link (Required for all clients, placed above Inventory Management) -->
+
+<p class="update-link">
+<!-- Link passes the account_id via the URL for the next controller function -->
+<a href="/account/update/<%= account_id %>" title="Click to update account information">Update Account Information</a>
+</p>
+
+<!-- Inventory Management Section (Conditional for Employee/Admin) -->
+
+<% if (account_type === "Employee" || account_type === "Admin") { %>
+
+<div class="management-section">
+<h3>Inventory Management</h3>
+<p>
+<!-- Link to the Inventory Management MVC route -->
+<a href="/inv/" title="Click to manage vehicle inventory">Manage Vehicle Inventory</a>
+</p>
+</div>
+<% } %>
+
+<% } else { %>
+
+<p class="notice">Account details could not be loaded. Please log in again.</p>
+<% } %>
+
+</div>

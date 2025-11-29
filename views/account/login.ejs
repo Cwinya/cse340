@@ -1,0 +1,51 @@
+<% /*
+The 'title' variable is set in the controller and used by the layout.
+The 'messages()' function is provided by the express-messages middleware.
+The 'nav' variable is provided by the utility function in server.js.
+*/ %>
+
+<div id="account-login-wrapper">
+<h1><%- title %></h1>
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+        <% errors.forEach(error => { %>
+            <li><%= error.msg %></li>
+        <% }) %>
+    </ul>
+<% } %>
+
+<form id="loginForm" action="/account/login" method="post">
+    
+    <label for="accountEmail">Email Address:</label>
+    <input 
+        type="email" 
+        name="account_email" 
+        id="accountEmail" 
+        placeholder="Enter a valid email"
+        required
+        value="<%= locals.account_email %>"
+    >
+
+    <label for="accountPassword">Password:</label>
+    <input 
+        type="password" 
+        name="account_password" 
+        id="accountPassword" 
+        placeholder="Enter password"
+        pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
+        title="Password must be at least 12 characters and contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character."
+        required
+    >
+    
+    <button type="submit">Login</button>
+
+    <p class="mt-4">
+        No account? <a href="/account/register" title="Register an account">Sign up here</a>.
+    </p>
+</form>
+
+
+</div>
