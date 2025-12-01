@@ -15,10 +15,12 @@ const inventoryRoute = require("./routes/inventoryRoute")
 // FIX: Changed './route/accountRoute' to './routes/accountRoute' 
 const accountRoute = require("./routes/accountRoute") 
 const utilities = require("./utilities")
-// npm install express-session cookie-parser connect-flash
+// npm install express-session cookie-parser connect-flash connect-pg-simple
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash"); 
+// FIX: Define pgSession using connect-pg-simple, passing the session object
+const pgSession = require('connect-pg-simple')(session);
 // NEW: Import Utility functions and middleware
 const Util = require("./utilities/")
 
@@ -27,12 +29,42 @@ const Util = require("./utilities/")
 // 1. Session Middleware (REQUIRED by connect-flash)
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || "supersecret-key", 
-        resave: true,
-        saveUninitialized: true,
-        name: 'sessionId', 
+         secret: process.env.SESSION_SECRET || "supersecret-key", 
+         resave: true,
+         saveUninitialized: true,
+         name: 'sessionId',
     })
 );
+
+
+
+app.use(
+  session({
+    // 1. Explicitly set the secret (fixes the deprecation warning)
+    secret: process.env.SESSION_SECRET, 
+    
+    // 2. Configure the session store to use PostgreSQL
+    store: new pgSession({
+      conString: process.env.DATABASE_URL
+    }),
+
+    // 3. Essential for production environments behind a proxy like Render
+    resave: false,
+    saveUninitialized: false, 
+    name: 'sessionId',
+    cookie: {
+      secure: true, // CRITICAL: Only send cookie over HTTPS (Required on Render)
+      httpOnly: true,
+      maxAge: 3600000 // 1 hour
+    }
+  })
+)
+
+// 4. Tell Express to trust the Render proxy, necessary for 'secure: true' to work
+app.set('trust proxy', 1)
+
+
+
 // 2. Cookie Parser Middleware
 app.use(cookieParser());
 // 3. Flash Message Middleware
@@ -42,28 +74,6 @@ app.use(flash());
 app.use(express.urlencoded({ extended: true })) 
 // Middleware to parse JSON data 
 app.use(express.json())
-
-// The following block is typically replaced by the 'express-messages' middleware below, 
-// which is simpler and more reliable for rendering flash messages in EJS.
-/*
-// 4. Local Variables Middleware (Defines the messages() helper)
-app.use(async (req, res, next) => {
-    // Define a res.locals.messages function that renders all flash messages
-    res.locals.messages = () => {
-        let output = '';
-        const success = req.flash('success');
-        if (success && success.length > 0) {
-            output += `<div class="notice success">${success.join('<br>')}</div>`;
-        }
-        const error = req.flash('error');
-        if (error && error.length > 0) {
-            output += `<div class="notice error">${error.join('<br>')}</div>`;
-        }
-        return output;
-    };
-    next();
-});
-*/
 
 // Express Messages Middleware (Simplified method for rendering flash messages)
 app.use(function(req, res, next){
