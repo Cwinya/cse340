@@ -33,7 +33,7 @@ const Util = require("./utilities/")
 app.use(
   session({
     // 1. Explicitly set the secret
-    secret: process.env.SESSION_SECRET || "supersecret-key", 
+    secret: process.env.SESSION_SECRET || "", 
     
     // 2. Configure the session store to use the PRE-CONFIGURED PostgreSQL pool
     // This uses the pool defined in database/index.js which has the SSL fix.
