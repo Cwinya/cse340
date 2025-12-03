@@ -36,6 +36,21 @@ if (process.env.NODE_ENV === "development") {
   pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   })
-  // In production, we export the pg.Pool object directly, as it includes the .query() method.
-  module.exports = pool
+  
+  // CRITICAL FIX: Ensure production export matches development export structure, 
+  // providing both a 'pool' property (for session store) and a 'query' method.
+  module.exports = {
+    pool, // Export the pool object (needed by connect-pg-simple)
+    query: async (text, params) => {
+        // Use the raw pool's query method directly
+        try {
+            const res = await pool.query(text, params)
+            console.log("executed query", { text: text.slice(0, 50) })
+            return res
+        } catch (error) {
+            console.error("error in query (PROD)", { text: text.slice(0, 50) }, error)
+            throw error
+        }
+    }
+  }
 }
