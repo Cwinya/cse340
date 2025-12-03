@@ -44,8 +44,8 @@ app.use(
     }),
 
     // 3. Essential for production environments behind a proxy like Render
-    resave: false, 
-    saveUninitialized: false, 
+    resave: true, 
+    saveUninitialized: true, 
     name: 'sessionId',
     cookie: {
       // Use process.env.NODE_ENV === 'production' logic (good practice)
