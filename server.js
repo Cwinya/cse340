@@ -19,7 +19,6 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash"); 
 
-// CRITICAL FIX: Re-add pgSession definition and database import
 const pgSession = require('connect-pg-simple')(session);
 const db = require("./database/") // Import the SSL-configured database object
 
@@ -30,31 +29,34 @@ const Util = require("./utilities/")
 // --- MIDDLEWARE SETUP ---
 // 1. Session Middleware (REQUIRED by connect-flash)
 
-app.use(
-  session({
-    // 1. Explicitly set the secret
-    secret: process.env.SESSION_SECRET || "", 
-    
-    // 2. Configure the session store to use the PRE-CONFIGURED PostgreSQL pool
-    // This uses the pool defined in database/index.js which has the SSL fix.
-    store: new pgSession({
-      // Pass the already configured pool instance
-      pool: db.pool || db, 
-      tableName: 'session', 
-    }),
+// Define production status helper
+const isProduction = process.env.NODE_ENV === 'production'
 
-    // 3. Essential for production environments behind a proxy like Render
-    resave: true, 
-    saveUninitialized: true, 
-    name: 'sessionId',
-    cookie: {
-      // Use process.env.NODE_ENV === 'production' logic (good practice)
-      secure: process.env.NODE_ENV === 'production', 
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24, // 24 hours
-      sameSite: 'lax'
-    }
-  })
+app.use(
+    session({
+        // 1. Explicitly set the secret
+        secret: process.env.SESSION_SECRET || "default_secret_fallback", 
+        
+        // 2. Configure the session store to use the PRE-CONFIGURED PostgreSQL pool
+        store: new pgSession({
+            // Pass the already configured pool instance
+            pool: db.pool || db, 
+            tableName: 'session', 
+        }),
+
+        // 3. Essential for production environments behind a proxy like Render
+        resave: true, 
+        saveUninitialized: true, 
+        name: 'sessionId',
+        cookie: {
+            // FIX: Set secure to true in production
+            secure: isProduction, 
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24, // 24 hours
+            // CRITICAL RENDER FIX: Must be 'none' when secure is true (behind proxy)
+            sameSite: isProduction ? 'none' : 'lax'
+        }
+    })
 )
 
 // 4. Tell Express to trust the Render proxy, necessary for 'secure: true' to work

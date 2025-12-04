@@ -1,9 +1,10 @@
 const pool = require("../database/")
 
 /* ***************************
- *  Get all classification data
+ * Get all classification data
  * ************************** */
 async function getClassifications(){
+  // Using public.classification for clarity, though it's optional if public is in the search path
   return await pool.query("SELECT * FROM public.classification ORDER BY classification_name")
 }
 
@@ -15,7 +16,9 @@ async function addClassification(classification_name) {
     const sql = "INSERT INTO classification (classification_name) VALUES ($1) RETURNING *"
     return await pool.query(sql, [classification_name])
   } catch (error) {
-    return error.message
+    // SECURITY IMPROVEMENT: Log the full error but throw a generic one back to the controller
+    console.error("addClassification error: " + error);
+    throw new Error("Failed to add new classification.");
   }
 }
 
@@ -28,7 +31,9 @@ async function checkExistingClassification(classification_name) {
     const classification = await pool.query(sql, [classification_name])
     return classification.rowCount
   } catch (error) {
-    return error.message
+    // Log the full error for debugging but let the calling code handle the response
+    console.error("checkExistingClassification error: " + error);
+    throw new Error("Database check failed.");
   }
 }
 
@@ -63,13 +68,15 @@ async function addInventory(
     ])
     return result
   } catch (error) {
-    return error.message
+    // SECURITY IMPROVEMENT: Log the full error but throw a generic one back to the controller
+    console.error("addInventory error: " + error);
+    throw new Error("Failed to add new inventory item.");
   }
 }
 
 
 /* ***************************
- *  Get all inventory items and classification_name by classification_id
+ * Get all inventory items and classification_name by classification_id
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
   try {
@@ -82,7 +89,7 @@ async function getInventoryByClassificationId(classification_id) {
     )
     return data.rows
   } catch (error) {
-    console.error("getclassificationsbyid error " + error)
+    console.error("getInventoryByClassificationId error: " + error) // Corrected function name in console.error
   }
 }
 
