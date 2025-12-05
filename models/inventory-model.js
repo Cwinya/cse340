@@ -89,7 +89,7 @@ async function getInventoryByClassificationId(classification_id) {
     )
     return data.rows
   } catch (error) {
-    console.error("getInventoryByClassificationId error: " + error) // Corrected function name in console.error
+    console.error("getInventoryByClassificationId error: " + error) 
   }
 }
 
@@ -103,8 +103,8 @@ async function getInventoryById(inv_id) {
       WHERE inv_id = $1`,
       [inv_id]
     );
-    // Returns an array containing a single object (or empty array if not found)
-    return data.rows;
+    // Improvement: Return the single object (or undefined if not found), not an array.
+    return data.rows[0]; 
   } catch (error) {
     console.error("getInventoryById error: " + error);
   }

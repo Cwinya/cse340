@@ -1,4 +1,95 @@
 <h1 class="main-content-heading"><%= title %></h1>
 <hr>
 
-<%- detailView %>
+<!-- Vehicle Image and Details (Left/Top) -->
+<div class="vehicle-detail-grid">
+    <!-- Main Content Area: Image and Key Features -->
+    <div class="main-details-area">
+        <div class="detail-layout-swap">
+            
+            <!-- 1. Key Features and Description (Left Column on Desktop, Bottom on Mobile) -->
+            <section class="card key-features">
+                <h2>Key Features</h2>
+                
+                <p class="price-display">Price: <span class="price-value">$<%= new Intl.NumberFormat('en-US').format(inventory.inv_price) %></span></p>
+
+                <ul class="feature-list">
+                    <li><strong>Make:</strong> <%= inventory.inv_make %></li>
+                    <li><strong>Model:</strong> <%= inventory.inv_model %></li>
+                    <li><strong>Year:</strong> <%= inventory.inv_year %></li>
+                    <li><strong>Miles:</strong> <%= new Intl.NumberFormat('en-US').format(inventory.inv_miles) %></li>
+                    <li><strong>Color:</strong> <%= inventory.inv_color %></li>
+                </ul>
+
+                <h3 class="description-heading">Description</h3>
+                <p class="description-text"><%= inventory.inv_description %></p>
+            </section>
+
+            <!-- 2. Vehicle Image (Right Column on Desktop, Top on Mobile) -->
+            <div class="image-wrapper">
+                <img src="<%= inventory.inv_image %>"
+                    alt="<%= inventory.inv_make %> <%= inventory.inv_model %> on sale"
+                    class="vehicle-image"
+                    onerror="this.onerror=null; this.src='https://placehold.co/600x400/000000/FFFFFF?text=Image+Not+Found'"
+                >
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Section (Right/Bottom) -->
+    <div class="review-sidebar-area">
+        <div class="card review-card">
+            <h2>Customer Reviews</h2>
+
+            <!-- Display Errors if Validation Fails -->
+            <%- messages() %>
+            <% if (errors) { %>
+                <ul class="review-list alert-danger" role="alert">
+                    <% errors.array().forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <% if (loggedin) { %>
+                <!-- Review Submission Form -->
+                <section class="review-form-section">
+                    <h3 class="review-heading">Write Your Review</h3>
+                    <p class="posting-as">Posting as: <span class="font-semibold text-primary"><%= accountData.account_firstname %> <%= accountData.account_lastname %></span></p>
+
+                    <form action="/review/submit" method="post" class="review-form">
+                        <div class="form-group">
+                            <label for="review_rating">Rating (1-5):</label>
+                            <input type="number" id="review_rating" name="review_rating" min="1" max="5" required 
+                                value="<%= locals.review_rating || 5 %>" 
+                                class="form-input review-rating-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review_text" class="review-label">Your Review:</label>
+                            <textarea id="review_text" name="review_text" rows="4" required 
+                                class="form-input review-text-area"><%= locals.review_text || '' %></textarea>
+                        </div>
+
+                        <input type="hidden" name="inv_id" value="<%= inventory.inv_id %>">
+                        <input type="hidden" name="account_id" value="<%= accountData.account_id %>">
+                        
+                        <button type="submit" class="submit-btn review-submit-btn">
+                            Submit Review
+                        </button>
+                    </form>
+                </section>
+            <% } else { %>
+                <p class="login-prompt">
+                    <a href="/account/login" class="login-link">Log in</a> to submit your own review.
+                </p>
+            <% } %>
+            
+            <!-- Existing Reviews Display -->
+            <section>
+                <h3 class="reviews-heading">All Reviews</h3>
+                <%- reviewDisplay %> 
+            </section>
+        </div>
+    </div>
+</div>

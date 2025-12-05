@@ -55,6 +55,30 @@ CREATE TABLE IF NOT EXISTS public.account
     CONSTRAINT account_pkey PRIMARY KEY (account_id)
 );
 
+CREATE TABLE IF NOT EXISTS "public.session" (
+  "sid" varchar NOT NULL COLLATE "default",
+	"sess" json NOT NULL,
+	"expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid");
+
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+
+-- Review Table Creation
+CREATE TABLE IF NOT EXISTS public.review (
+    review_id SERIAL PRIMARY KEY,
+    review_text TEXT NOT NULL,
+    review_rating SMALLINT NOT NULL CHECK (review_rating >= 1 AND review_rating <= 5), -- Rating 1-5
+    review_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    inv_id INT NOT NULL REFERENCES inventory(inv_id) ON DELETE CASCADE,
+    account_id INT NOT NULL REFERENCES account(account_id) ON DELETE CASCADE
+);
+
+-- Index for fast lookups by vehicle
+CREATE IF NOT EXISTS INDEX idx_review_inv_id ON review(inv_id);
+
 
 -- Data for table 'classification'
 INSERT INTO public.classification (classification_name)
