@@ -6,7 +6,7 @@ CREATE TYPE public.account_type AS ENUM
     ('Client', 'Employee', 'Admin');
 
 ALTER TYPE public.account_type
-    OWNER TO cse340;
+    OWNER TO cse350;
 
 
 -- Table structure for table 'classification'
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public.account
     CONSTRAINT account_pkey PRIMARY KEY (account_id)
 );
 
-CREATE TABLE IF NOT EXISTS "public.session" (
+CREATE TABLE "session" (
   "sid" varchar NOT NULL COLLATE "default",
 	"sess" json NOT NULL,
 	"expire" timestamp(6) NOT NULL
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS public.review (
 );
 
 -- Index for fast lookups by vehicle
-CREATE IF NOT EXISTS INDEX idx_review_inv_id ON review(inv_id);
+CREATE INDEX idx_review_inv_id ON review(inv_id);
 
 
 -- Data for table 'classification'
